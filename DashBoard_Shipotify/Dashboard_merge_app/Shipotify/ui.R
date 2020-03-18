@@ -67,9 +67,8 @@ shinyUI(dashboardPage(
       ),
       tabItem(tabName = "ua",
               fluidRow(
-                box(title= "Artist ranking",
-                    height = "360",
-                    width = "9",
+                box(title= "Emotion Summary",
+                    width = "12",
                     solidHeader = T, 
                     column
                     (width = 12,
@@ -78,8 +77,7 @@ shinyUI(dashboardPage(
                     )
                 ),
                 box(title= "Artist ranking",
-                    height = "360",
-                    width = "9",
+                    width = "12",
                     solidHeader = T, 
                     column
                     (width = 12,

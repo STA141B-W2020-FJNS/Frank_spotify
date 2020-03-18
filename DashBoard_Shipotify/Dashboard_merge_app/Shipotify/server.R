@@ -99,6 +99,7 @@ album_metrics2<-function(data){
   #drop all the repeated Album Names
   albums_final<- albums_final[!duplicated(albums_final$`Album Name`), ]
   
+  
   return(albums_final)
   
 }
@@ -223,25 +224,32 @@ shinyServer(function(input, output) {
     top_artists <- as_tibble(top_artists %>%
                                transmute(
                                  genres = genres,
-                                 name = name,
+                                 Rank = name,
                                  popularity = popularity,
                                  type = type,
                                  uri = uri,
                                  followers.total = followers.total
                                )
     )
+    top_artists$Rank <- factor(top_artists$Rank, levels = top_artists$Rank)
     ## User's top artists ##
-    ggplot(head(top_artists,n = 10), aes(x=name, y = followers.total,fill = name)) + 
+    ggplot(head(top_artists,n = 10), aes(x=Rank, y = followers.total,fill = Rank)) + 
       geom_bar(stat = "identity") +
       geom_text(aes(label = followers.total),angle = 45) +
-      ggtitle("YOUR TOP ARTISTS")
+      ggtitle("YOUR TOP ARTISTS") +
+      labs(x = "Name")
   })
   output$Emotion <- renderPlot({
     scopes <- c("user-library-read","streaming","user-top-read","user-read-recently-played","user-read-private")
     get_spotify_authorization_code(scope = scopes)
     top_tracks <- get_my_top_artists_or_tracks(type = "tracks",limit = 50)
     top_track_info <- get_track_audio_features(top_tracks$id)
-    ggplot(data = top_track_info, aes(x = energy, y = valence, color = loudness)) + 
-      geom_point(size=3)
+    ggplot(data = top_track_info, aes(x = energy, y = valence, color = tempo)) + 
+      geom_point(size=3) +
+      geom_hline(yintercept=0.5)+
+      geom_vline(xintercept = 0.5)+
+      scale_color_gradient(low="blue", high="red")
+    
+    
   })
 })

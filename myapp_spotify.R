@@ -17,7 +17,7 @@ library(tidyverse)
 library(ggplot2)
 
 
-usethis::edit_r_environ("project")
+#usethis::edit_r_environ("project")
 access_token <- get_spotify_access_token(client_id = Sys.getenv('SPOTIFY_CLIENT_ID'), client_secret = Sys.getenv('SPOTIFY_CLIENT_SECRET'))
 
 ###################################
@@ -104,19 +104,21 @@ top_artists <- get_my_top_artists_or_tracks(type = "artists",limit = 50)
 top_artists <- as_tibble(top_artists %>%
   transmute(
     genres = genres,
-    name = name,
+    Rank = name,
     popularity = popularity,
     type = type,
     uri = uri,
     followers.total = followers.total
   )
 )
+top_artists$Rank <- factor(top_artists$Rank, levels = top_artists$Rank)
 
 ## User's top artists ##
-ggplot(head(top_artists,n = 10), aes(x=name, y = followers.total,fill = name)) + 
+ggplot(head(top_artists,n = 10), aes(x=Rank, y = followers.total,fill = Rank)) + 
   geom_bar(stat = "identity") +
   geom_text(aes(label = followers.total),angle = 45) +
-  ggtitle("YOUR TOP ARTISTS")
+  ggtitle("YOUR TOP ARTISTS") +
+  labs(x = "Name")
 
 
   ## User's top artists rank by follower ##
@@ -147,8 +149,12 @@ get_track_audio_features <- function (ids, authorization = get_spotify_access_to
 
 top_track_info <- get_track_audio_features(top_tracks$id)
 
-ggplot(data = top_track_info, aes(x = energy, y = valence, color = loudness)) + 
-  geom_point(size=3)
+ggplot(data = top_track_info, aes(x = energy, y = valence, color = tempo)) + 
+  geom_point(size=3) +
+  geom_hline(yintercept=0.5)+
+  geom_vline(xintercept = 0.5)+
+  scale_color_gradient(low="blue", high="red")
+
 
 
 top_tracks_10 <- as.tibble(top_tracks_10)
@@ -239,5 +245,5 @@ get_artist_audio_features <- function (artist = NULL, include_groups = "album", 
 }
 
 
-get_artist_audio_features(artist = )
+
 ###################################
