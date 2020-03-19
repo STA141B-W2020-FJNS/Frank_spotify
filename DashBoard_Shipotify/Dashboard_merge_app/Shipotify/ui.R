@@ -67,22 +67,31 @@ shinyUI(dashboardPage(
       ),
       tabItem(tabName = "ua",
               fluidRow(
-                box(title= "Emotion Summary",
+                box(title= "Your Top 10 Artist!",
                     width = "12",
                     solidHeader = T, 
                     column
                     (width = 12,
                       plotOutput("Top"),
-                      style = "height:300px; overflow-y: scroll;overflow-x: scroll;"
+                      style = "height:400px; overflow-y: scroll;overflow-x: scroll;"
                     )
                 ),
-                box(title= "Artist ranking",
+                box(title= "Your Popular Top Artist",
+                    width = "12",
+                    solidHeader = T, 
+                    column
+                    (width = 12,
+                      plotOutput("PopularTop"),
+                      style = "height:400px; overflow-y: scroll;overflow-x: scroll;"
+                    )
+                ),
+                box(title= "Emotion Summary",
                     width = "12",
                     solidHeader = T, 
                     column
                     (width = 12,
                       plotOutput("Emotion"),
-                      style = "height:300px; overflow-y: scroll;overflow-x: scroll;"
+                      style = "height:400px; overflow-y: scroll;overflow-x: scroll;"
                     )
                 )
               )

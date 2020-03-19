@@ -236,7 +236,26 @@ shinyServer(function(input, output) {
     ggplot(head(top_artists,n = 10), aes(x=Rank, y = followers.total,fill = Rank)) + 
       geom_bar(stat = "identity") +
       geom_text(aes(label = followers.total),angle = 45) +
-      ggtitle("YOUR TOP ARTISTS") +
+      labs(x = "Name")
+  })
+  output$PopularTop <- renderPlot({
+    scopes <- c("user-library-read","streaming","user-top-read","user-read-recently-played","user-read-private")
+    get_spotify_authorization_code(scope = scopes)
+    top_artists <- get_my_top_artists_or_tracks(type = "artists",limit = 50)
+    top_artists <- as_tibble(top_artists %>%
+                               transmute(
+                                 genres = genres,
+                                 name = name,
+                                 popularity = popularity,
+                                 type = type,
+                                 uri = uri,
+                                 followers.total = followers.total
+                               )
+    )
+    ## User's top artists ##
+    ggplot(head(top_artists,n = 10), aes(x=reorder(name,-followers.total), y = followers.total,fill = followers.total)) + 
+      geom_bar(stat = "identity") +
+      geom_text(aes(label = followers.total),angle = 45) +
       labs(x = "Name")
   })
   output$Emotion <- renderPlot({
