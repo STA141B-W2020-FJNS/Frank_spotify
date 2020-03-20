@@ -1,11 +1,4 @@
-#
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-# 
-#    http://shiny.rstudio.com/
-#
+
 library(shiny)
 library(tidyverse)
 library(shinyWidgets)
@@ -14,8 +7,14 @@ library(spotifyr)
 library(formattable)
 library(shinydashboard)
 
+r_cat <- GET('https://api.spotify.com/v1/browse/categories',
+             add_headers(Authorization = paste("Bearer", get_spotify_access_token())),
+             query = list(country = 'US', locale = 'en_US', limit = 50))
+json_cat <- content(r_cat, as = 'text')
+from_json_cat <- fromJSON(json_cat)
+cats <- from_json_cat$categories$items %>% select(name, id)
 
-# Define UI for application that draws a histogram
+
 shinyUI(dashboardPage(
   dashboardHeader(
     title="Spotify Analysis"
@@ -24,7 +23,8 @@ shinyUI(dashboardPage(
     sidebarMenu(
       #first item
       menuItem("Album Artist Analysis", tabName = "aaa", icon = icon("acquisitions-incorporated")),
-      menuItem("User Analysis", tabName = "ua", icon = icon("calendar"))
+      menuItem("User Analysis", tabName = "ua", icon = icon("calendar")),
+      menuItem("Popular Lists", tabName = "popular", icon = icon("calendar"))
     )
   ),
   dashboardBody(
@@ -93,6 +93,25 @@ shinyUI(dashboardPage(
                       plotOutput("Emotion"),
                       style = "height:400px; overflow-y: scroll;overflow-x: scroll;"
                     )
+                )
+              )
+      ),
+      tabItem(tabName = "popular",
+              fluidRow(
+                box(
+                  selectInput("cat", "Category", cats$name),
+                  sliderInput("num", "Number of Tracks", min = 1, max = 30, value = 10),
+                  width = "3",
+                  height = "360"
+                ),
+                box(column(width = 12,
+                           tableOutput("mpts"),
+                           style = "height:300px; overflow-y: scroll; overflow-x: scroll;"
+                ),
+                title = "Most Popular Spotify Tracks per Category",
+                height = "360",
+                width = "9",
+                solidHeader = TRUE
                 )
               )
       )
