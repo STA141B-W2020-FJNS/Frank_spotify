@@ -16,7 +16,7 @@ time_calculator <- function(a){
   seconds = floor((a%%floor(a))*60)
   a<-case_when(
     a >= 60 ~  sprintf("%01d:%02d:%02d", hours, minutes, seconds),
-    a < 20 ~ sprintf("0:%02d:%02d", minutes, seconds)
+    a < 60 ~ sprintf("0:%02d:%02d", minutes, seconds)
   )
   return(a)
   
@@ -303,3 +303,4 @@ shinyServer(function(input, output) {
     }
   })
 })
+
